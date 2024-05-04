@@ -21,7 +21,7 @@
   type T = $$Generic
   type Item = T & { id: string }
 
-  export let title: string
+  export let title: string = ""
   export let items: Item[] = []
   export let filters: Filter[]
   export let sorters: Sorters
