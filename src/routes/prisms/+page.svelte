@@ -7,6 +7,7 @@
   import ItemsList from '$lib/components/ItemsList.svelte'
   import type { Prism } from '$lib/@types/prisms.js'
   import PrismRow from './PrismRow.svelte'
+  import plus from '$lib/icons/plus'
 
   const route = 'prisms'
   const rowSize = 101
@@ -18,6 +19,12 @@
   const sync = async (connection: Connection) => {
     console.log('sync fetchPrisms')
     await fetchPrisms(connection)
+  }
+
+  const button = {
+    href: '/channels/open',
+    text: $translate('app.labels.create'),
+    icon: plus
   }
 
   let prisms: Prism[] = []
@@ -32,6 +39,7 @@
   {sorters}
   {tags}
   {sync}
+  {button}
   {route}
   {rowSize}
   bind:items={prisms}
