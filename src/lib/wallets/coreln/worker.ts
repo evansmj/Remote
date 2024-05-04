@@ -13,11 +13,13 @@ import type {
   ListTransactionsResponse,
   ListfundsResponse,
   Pay,
+  PrismBindingResponse,
   PrismResponse,
   RawInvoice,
   SocketWrapper
 } from './types.js'
 import type { Prism } from '$lib/@types/prisms.js'
+import type { PrismBinding } from '$lib/@types/prism-bindings.js'
 
 export const coreLnWorker = new Worker(
   new URL('$lib/wallets/coreln/coreln.worker.ts', import.meta.url),
@@ -239,7 +241,42 @@ export const getPrisms = async (params: {
     socketId
   })
 
-  console.log("after coreLnWorker.postMessage")
+  return firstValueFrom(
+    messages$.pipe(
+      filter(message => message.data.id === id),
+      map(message => {
+        if (message.data.error) {
+          throw message.data.error
+        }
+        const formattedPrisms = message.data.result.map((responsePrism: PrismResponse) => {
+          const { prism_id, ...rest } = responsePrism
+          return {
+            id: prism_id,
+            ...rest
+          } as Prism
+        })
+        console.log("formattedPrisms = " + JSON.stringify(formattedPrisms))
+        return formattedPrisms
+      })
+    )
+  )
+}
+
+export const getPrismBindings = async (params: {
+  rune: string,
+  walletId: string,
+  socketId: string
+}): Promise<PrismBinding[]> => {
+  console.log("worker.ts getPrismBindings called*******")
+  const id = createRandomHex()
+  const { rune, socketId } = params
+
+  coreLnWorker.postMessage({
+    id,
+    type: 'get_prism_bindings',
+    rune,
+    socketId
+  })
 
   return firstValueFrom(
     messages$.pipe(
@@ -248,17 +285,14 @@ export const getPrisms = async (params: {
         if (message.data.error) {
           throw message.data.error
         }
-        //here is where it gets mapped.  
-        const formattedPrisms = message.data.result.map((responsePrism: PrismResponse) => {
-          const { prism_id, prism_members, timestamp } = responsePrism
+        const formattedPrismBindings = message.data.result.map((responseBinding: PrismBindingResponse) => {
+          const { binding_id, ...rest } = responseBinding
           return {
-            id: prism_id,
-            prism_members: prism_members,
-            timestamp: timestamp
-          } as Prism
+            id: binding_id,
+            ...rest
+          } as PrismBinding
         })
-        console.log("formattedPrisms = " + JSON.stringify(formattedPrisms))
-        return formattedPrisms
+        return formattedPrismBindings
       })
     )
   )

@@ -11,6 +11,7 @@ import type {
   TransactionPayment
 } from '$lib/@types/payments.js'
 import type { Prism } from '$lib/@types/prisms.js'
+import type { PrismBinding } from '$lib/@types/prism-bindings.js'
 
 type MessageBase = {
   id: string
@@ -37,6 +38,11 @@ type UpdateInvoicesMessage = MessageBase & {
 type UpdatePrismsMessage = MessageBase & {
   type: 'update_prisms',
   prisms: Prism[]
+}
+
+type UpdatePrismBindingsMessage = MessageBase & {
+  type: 'update_prism_bindings',
+  prismBindings: PrismBinding[]
 }
 
 type UpdateTableItemsMessage = MessageBase & {
@@ -75,6 +81,7 @@ type Message =
   | UpdateAddressesMessage
   | UpdateInvoicesMessage
   | UpdatePrismsMessage
+  | UpdatePrismBindingsMessage
 
 onmessage = async (message: MessageEvent<Message>) => {
   switch (message.data.type) {
@@ -231,35 +238,39 @@ onmessage = async (message: MessageEvent<Message>) => {
             prisms.map(async prism => {
               console.log("iterating prism: " + JSON.stringify(prism))
               console.log("prism.id for this one is: " + prism.id)
-              // CLN replaced(?) transaction has a block height of 0
-              // if (transaction.data.blockHeight === 0) {
-              //   await db.payments.delete(transaction.id)
-              //   return
-              // }
-
-              /*message.data.channels.map(async channel => {
-                // need to update channels as old channels lose data after 100 blocks of being close
-                // so we don't want to overwrite data we already have as it is useful
-                await db.channels
-                  .where({ id: channel.id, walletId: channel.walletId })
-                  .modify(channel)
-                  .then(async updated => {
-                    if (!updated) {
-                      await db.channels.add(channel)
-                    }
-                  }*/
-
-              //todo do i need to store the members
               return db.prisms.update(prism.id, prism).then(updated => {
                 !updated && db.prisms.put(prism)
               })
             })
           )
         }
-
+        self.postMessage({ id: message.data.id })
       } catch (error) {
-        //
+        const { message: errMsg } = error as Error
+        self.postMessage({ id: message.data.id, error: errMsg })      
       }
+      return
+    }
+    case 'update_prism_bindings': {
+      console.log("db.worker update_prism_bindings: " + JSON.stringify(message.data))
+      try {
+        const prismBindings = message.data.prismBindings
+
+        if (prismBindings.length) {
+          await Promise.all(
+            prismBindings.map(async binding => {
+              return db.prismBindings.update(binding.id, binding).then(updated => {
+                !updated && db.prismBindings.put(binding)
+              })
+            })
+          )
+        }
+        self.postMessage({ id: message.data.id })
+      } catch (error) {
+        const { message: errMsg } = error as Error
+        self.postMessage({ id: message.data.id, error: errMsg })
+      }
+      return
     }
     case 'bulk_put': {
       try {

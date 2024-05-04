@@ -30,6 +30,7 @@ import type {
   ListPeerChannelsResponse,
   ListfundsResponse,
   PrismListResponse,
+  PrismBindingListResponse,
 } from './types.js'
 
 // required to be init at least once to derive taproot addresses
@@ -79,6 +80,15 @@ type GetPrismsMessage = MessageBase & {
   prism?: { id: string }
 }
 
+type GetPrismBindingsMessage = MessageBase & {
+  socketId: string,
+  type: 'get_prism_bindings'
+  rune: string,
+  version: number,
+  walletId: string,
+  prismBindings?: { id: string }
+}
+
 type FormatPaymentsMessage = MessageBase & {
   type: 'format_payments'
   invoices: RawInvoice[]
@@ -119,6 +129,7 @@ type Message =
   | GetChannelsMessage
   | FormatUtxosMessage
   | GetPrismsMessage
+  | GetPrismBindingsMessage
 
 const sockets: Record<string, LnMessage> = {}
 
@@ -675,13 +686,30 @@ onmessage = async (message: MessageEvent<Message>) => {
         const prismListResult = await socket.commando({ method: 'prism-list', rune }) as PrismListResponse
         console.log("~~~~~~~~~~~~~~~~~~ get_prisms prism-list result = " + JSON.stringify(prismListResult))
 
-        console.log("prismListResult = " + JSON.stringify(prismListResult))
-
         self.postMessage({
           id,
           result: prismListResult.prisms
         })
-        //where does prism response get turned into Prism[]
+
+        return
+      } catch (error) {
+        console.log(error)
+        break
+      }
+    }
+    case 'get_prism_bindings': {
+      const { id, rune } = message.data
+
+      try {
+        const socket = sockets[message.data.socketId]
+        const prismBindingsResult = await socket.commando({ method: 'bolt12_prism_bindings', rune}) as PrismBindingListResponse
+        console.log("~~~~~~~~ bolt12_prism_bindings response = " + JSON.stringify(prismBindingsResult))
+
+        self.postMessage({
+          id,
+          result: prismBindingsResult.bolt12_prism_bindings
+        })
+
         return
       } catch (error) {
         console.log(error)

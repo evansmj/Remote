@@ -1180,16 +1180,34 @@ export type PrismListResponse = {
 export type PrismResponse = {
   prism_id: string,
   prism_members: PrismMemberResponse[],
-  timestamp: number
+  timestamp: number,
+  outlay_factor: number
 }
 
 export type PrismMemberResponse = {
-  "member_id": string,
-  "label": string,
-  "destination": string,
-  "split": number,
-  "fees_incurred_by": string,
-  "payout_threshold": string
+  member_id: string,
+  label: string,
+  destination: string,
+  split: number,
+  fees_incurred_by: string,
+  payout_threshold_msat: number
+}
+
+export type PrismBindingListResponse = {
+  bolt12_prism_bindings: PrismBindingResponse[]
+}
+
+export type PrismBindingResponse = {
+  binding_id: string,
+  offer_id: string,
+  prism_id: string,
+  timestamp: number,
+  member_outlays: MemberOutlayResponse[]
+}
+
+export type MemberOutlayResponse = {
+  member_id: string,
+  outlay_msat: number
 }
 
 export type LNResponse =
@@ -1220,6 +1238,7 @@ export type LNResponse =
   | FundChannelResponse
   | ListNodesResponse
   | PrismListResponse
+  | PrismBindingListResponse
 
 export type RpcRequest = (req: JsonRpcRequest & { rune: string }) => Promise<unknown>
 

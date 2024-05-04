@@ -38,7 +38,7 @@
   limit={maxAmountPrismsToFetch}
 >
   <div slot="summary">
-    <div class="w-full">Summary goes here</div>
+    <!-- <div class="w-full">Summary goes here</div> -->
   </div>
 
   <div slot="row" let:item>
