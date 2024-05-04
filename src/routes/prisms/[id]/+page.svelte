@@ -97,7 +97,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="font-semibold">Split:</span>
-                <span>{(member.split * 100).toFixed(2)}%</span>
+                <span>{member.split}</span>
               </div>
               <div class="flex justify-between">
                 <span class="font-semibold">Fees are incurred by:</span>
