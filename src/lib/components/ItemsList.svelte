@@ -21,6 +21,7 @@
   type T = $$Generic
   type Item = T & { id: string }
 
+  export let title: string
   export let items: Item[] = []
   export let filters: Filter[]
   export let sorters: Sorters
@@ -212,7 +213,7 @@
   <Section>
     <div bind:clientHeight={headerContainerHeight}>
       <div class="w-full flex items-center justify-between">
-        <SectionHeading icon={list} />
+        <SectionHeading icon={list} text={title}/>
         <div class="flex items-center gap-x-2">
           <SyncRouteData sync={syncItems} />
           <FilterSort
