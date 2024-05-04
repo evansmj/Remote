@@ -13,6 +13,7 @@ import type { ExchangeRate } from '../@types/exchange-rates.js'
 import type { Node } from '../@types/nodes.js'
 import type { Payment } from '$lib/@types/payments.js'
 import type { Tag } from '$lib/@types/metadata.js'
+import type { Prism } from '$lib/@types/prisms.js'
 
 class DB extends Dexie {
   channels!: Table<Channel>
@@ -24,6 +25,7 @@ class DB extends Dexie {
   nodes!: Table<Node>
   offers!: Table<Offer>
   payments!: Table<Payment>
+  prisms!: Table<Prism>
   tags!: Table<Tag>
   trades!: Table<Trade>
   utxos!: Table<Utxo>
@@ -33,7 +35,7 @@ class DB extends Dexie {
   constructor() {
     super('Clams Remote')
 
-    this.version(1).stores({
+    this.version(2).stores({
       channels:
         '&[id+walletId], id, walletId, shortId, balanceLocal, balanceRemote, peerId, status, opener, [id+opener], [fundingTransactionId+fundingOutput], [fundingTransactionId+fundingOutput+walletId], closeTo, *metadata.tags, metadata.contact',
       contacts: '&id, name, npub',
@@ -47,6 +49,8 @@ class DB extends Dexie {
         '&id, walletId, bolt12, amount, nodeId, description, type, issuer, [description+type+issuer], *metadata.tags, metadata.contact',
       payments:
         '&[id+walletId], timestamp, status, direction, data.channel.type, [data.channel.id+walletId], data.offer.id, network, [walletId+type], data.payIndex, *metadata.tags, metadata.contact, data.fallbackAddress, data.amount, data.fee, [type+status], [direction+data.amount], [data.direction+data.amount]',
+      prisms: '&id, timestamp, *prism_members.member_id, *metadata.tags, metadata.contact',
+      // members: '&member_id, label, destination, split, fees_incurred_by, payout_threshold',
       tags: '&id, label',
       trades:
         '&id, walletId, side, fee, amount, price, timestamp, fiatDenomination, *metadata.tags, metadata.contact',

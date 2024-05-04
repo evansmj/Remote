@@ -31,6 +31,7 @@ import type {
   PayInvoiceOptions,
   PayKeysendOptions
 } from '$lib/@types/invoices.js'
+import type { Prism } from '$lib/@types/prisms'
 
 export type ConnectionStatus = 'connected' | 'connecting' | 'waiting_reconnect' | 'disconnected'
 
@@ -60,6 +61,7 @@ export interface Connection {
   withdrawals?: WithdrawalsInterface
   deposits?: DepositsInterface
   network?: NetworkInterface
+  prisms?: PrismsInterface
 }
 
 export type Info = {
@@ -185,4 +187,8 @@ export interface DepositsInterface {
 export interface NetworkInterface {
   /** get node details */
   getNode(id: string): Promise<Node | null>
+}
+
+export interface PrismsInterface {
+  get(): Promise<Prism[]>
 }

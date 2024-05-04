@@ -28,7 +28,8 @@ import type {
   NodeFullResponse,
   ListPeersResponse,
   ListPeerChannelsResponse,
-  ListfundsResponse
+  ListfundsResponse,
+  PrismListResponse,
 } from './types.js'
 
 // required to be init at least once to derive taproot addresses
@@ -67,6 +68,15 @@ type GetChannelsMessage = MessageBase & {
   version: number
   walletId: string
   channel?: { id: string; peerId: string }
+}
+
+type GetPrismsMessage = MessageBase & {
+  socketId: string,
+  type: 'get_prisms'
+  rune: string,
+  version: number,
+  walletId: string,
+  prism?: { id: string }
 }
 
 type FormatPaymentsMessage = MessageBase & {
@@ -108,6 +118,7 @@ type Message =
   | FormatTransactionsMessage
   | GetChannelsMessage
   | FormatUtxosMessage
+  | GetPrismsMessage
 
 const sockets: Record<string, LnMessage> = {}
 
@@ -458,6 +469,7 @@ onmessage = async (message: MessageEvent<Message>) => {
       }
 
       try {
+        console.log("version = " + version)
         if (version < 2305) {
           const socket = sockets[message.data.socketId]
           const listPeersResult = await socket.commando({
@@ -564,6 +576,8 @@ onmessage = async (message: MessageEvent<Message>) => {
 
           const { channels } = listPeerChannelsResult as ListPeerChannelsResponse
 
+          console.log("listPeerChannelsResult " + JSON.stringify(channels))
+
           const formattedChannels = await Promise.all(
             channels.map(async chan => {
               const {
@@ -638,6 +652,8 @@ onmessage = async (message: MessageEvent<Message>) => {
             })
           )
 
+          console.log("formattedChannels " + JSON.stringify(formattedChannels))
+
           const allChannels = formattedChannels.concat(closedChannels)
 
           self.postMessage({
@@ -646,6 +662,27 @@ onmessage = async (message: MessageEvent<Message>) => {
           })
           return
         }
+      } catch (error) {
+        console.log(error)
+        break
+      }
+    }
+    case 'get_prisms': {
+      const { id, rune } = message.data
+      
+      try {
+        const socket = sockets[message.data.socketId]
+        const prismListResult = await socket.commando({ method: 'prism-list', rune }) as PrismListResponse
+        console.log("~~~~~~~~~~~~~~~~~~ get_prisms prism-list result = " + JSON.stringify(prismListResult))
+
+        console.log("prismListResult = " + JSON.stringify(prismListResult))
+
+        self.postMessage({
+          id,
+          result: prismListResult.prisms
+        })
+        //where does prism response get turned into Prism[]
+        return
       } catch (error) {
         console.log(error)
         break

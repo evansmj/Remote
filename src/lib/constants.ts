@@ -7,6 +7,7 @@ import settingsOutline from '$lib/icons/settings-outline.js'
 import wallet from '$lib/icons/wallet.js'
 import forward from '$lib/icons/forward.js'
 import type { Network } from './@types/payments.js'
+import prisms from './icons/prisms.js'
 
 export const DEV = import.meta.env.DEV
 export const MODE = import.meta.env.MODE
@@ -35,6 +36,7 @@ export const TILES: Record<Tile, boolean> = {
   // accounting: true,
   // charts: true,
   // trades: true,
+  prisms: true,
   settings: true
 }
 
@@ -48,6 +50,7 @@ export const TILE_ICONS: Record<Tile, string> = {
   // trades: trade,
   // accounting: feeOutline,
   // charts: graph,
+  prisms: prisms,
   settings: settingsOutline
 }
 
@@ -138,7 +141,8 @@ export const FILTER_STORAGE_KEYS: Record<string, Record<string, string>> = {
     channels: `clams:filters:channels:${STORAGE_VERSION}`,
     offers: `clams:filters:offers:${STORAGE_VERSION}`,
     utxos: `clams:filters:utxos:${STORAGE_VERSION}`,
-    wallets: `clams:filters:wallets:${STORAGE_VERSION}`
+    wallets: `clams:filters:wallets:${STORAGE_VERSION}`,
+    prisms: `clams:filters:prisms:${STORAGE_VERSION}`
   },
   // saved sorter
   sorter: {
@@ -147,7 +151,8 @@ export const FILTER_STORAGE_KEYS: Record<string, Record<string, string>> = {
     channels: `clams:sorter:channels:${STORAGE_VERSION}`,
     offers: `clams:sorter:offers:${STORAGE_VERSION}`,
     utxos: `clams:sorter:utxos:${STORAGE_VERSION}`,
-    wallets: `clams:sorter:wallets:${STORAGE_VERSION}`
+    wallets: `clams:sorter:wallets:${STORAGE_VERSION}`,
+    prisms: `clams:sorter:prisms:${STORAGE_VERSION}`
   },
   // saved tag filters
   tags: {
@@ -156,7 +161,8 @@ export const FILTER_STORAGE_KEYS: Record<string, Record<string, string>> = {
     channels: `clams:tags:channels:${STORAGE_VERSION}`,
     offers: `clams:tags:offers:${STORAGE_VERSION}`,
     utxos: `clams:tags:utxos:${STORAGE_VERSION}`,
-    wallets: `clams:tags:wallets:${STORAGE_VERSION}`
+    wallets: `clams:tags:wallets:${STORAGE_VERSION}`,
+    prisms: `clams:prisms:wallets:${STORAGE_VERSION}`
   }
 }
 

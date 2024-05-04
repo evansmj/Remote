@@ -10,6 +10,7 @@ import type {
   Payment,
   TransactionPayment
 } from '$lib/@types/payments.js'
+import type { Prism } from '$lib/@types/prisms.js'
 
 type MessageBase = {
   id: string
@@ -31,6 +32,11 @@ type UpdateAddressesMessage = MessageBase & {
 
 type UpdateInvoicesMessage = MessageBase & {
   type: 'update_invoices'
+}
+
+type UpdatePrismsMessage = MessageBase & {
+  type: 'update_prisms',
+  prisms: Prism[]
 }
 
 type UpdateTableItemsMessage = MessageBase & {
@@ -68,6 +74,7 @@ type Message =
   | BulkPutMessage
   | UpdateAddressesMessage
   | UpdateInvoicesMessage
+  | UpdatePrismsMessage
 
 onmessage = async (message: MessageEvent<Message>) => {
   switch (message.data.type) {
@@ -109,6 +116,8 @@ onmessage = async (message: MessageEvent<Message>) => {
                 return
               }
 
+              //does this transaction object have .id already?  yes clearly
+              //
               return db.payments.update(transaction.id, transaction).then(updated => {
                 !updated && db.payments.put(transaction)
               })
@@ -203,6 +212,55 @@ onmessage = async (message: MessageEvent<Message>) => {
 
       return
     }
+    case 'update_prisms': {
+      console.log("db.worker update_prisms: " + JSON.stringify(message.data))
+      try {
+        //start here: hold up, is this supposed to be 1 prism or many?
+        //do i need to make a new domain type matching prismListResponse?
+        //do i need the dto vs domain anymore?
+        // maybe to follow their pattern?
+
+        const prisms = message.data.prisms
+
+        console.log("prisms variable = " + JSON.stringify(prisms))
+        //why is this message.data the Prism: = list instead of an array of prisms???
+        console.log("prisms.length " + prisms.length)
+
+        if (prisms.length) {
+          await Promise.all(
+            prisms.map(async prism => {
+              console.log("iterating prism: " + JSON.stringify(prism))
+              console.log("prism.id for this one is: " + prism.id)
+              // CLN replaced(?) transaction has a block height of 0
+              // if (transaction.data.blockHeight === 0) {
+              //   await db.payments.delete(transaction.id)
+              //   return
+              // }
+
+              /*message.data.channels.map(async channel => {
+                // need to update channels as old channels lose data after 100 blocks of being close
+                // so we don't want to overwrite data we already have as it is useful
+                await db.channels
+                  .where({ id: channel.id, walletId: channel.walletId })
+                  .modify(channel)
+                  .then(async updated => {
+                    if (!updated) {
+                      await db.channels.add(channel)
+                    }
+                  }*/
+
+              //todo do i need to store the members
+              return db.prisms.update(prism.id, prism).then(updated => {
+                !updated && db.prisms.put(prism)
+              })
+            })
+          )
+        }
+
+      } catch (error) {
+        //
+      }
+    }
     case 'bulk_put': {
       try {
         // eslint-disable-next-line
@@ -272,6 +330,8 @@ onmessage = async (message: MessageEvent<Message>) => {
       return
     }
     case 'get_filtered_sorted_items': {
+      console.log('db.worker.ts get_filtered_sorted_items message.data = '+ JSON.stringify(message.data))
+
       const { limit, sort, filters, tags, lastItem, table, lastItemKey } = message.data
 
       let collection: Collection<Payment>

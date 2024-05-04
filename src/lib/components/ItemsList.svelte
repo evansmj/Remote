@@ -38,6 +38,8 @@
   let initialLoad = true
 
   const loadItems = async () => {
+    console.log("loadItems() initialLoad = " + initialLoad)
+    console.log("loadItems route = " + JSON.stringify(route))
     try {
       if (initialLoad) {
         processing = true
@@ -50,6 +52,10 @@
         limit,
         table: route
       })) as Item[]
+
+      //its breaking above somewhere inside getSortedFilteredItems
+      console.log("afterSortedFilteredItems()")
+      console.log("rawItems = " + JSON.stringify(rawItems))
 
       if (dedupe) {
         items = await dedupe(rawItems)
@@ -168,7 +174,12 @@
 
   const syncItems = async () => {
     try {
-      await Promise.all(connections$.value.map(connection => connection.info && sync(connection)))
+      console.log("try syncItems ")
+
+      await Promise.all(connections$.value.map(connection => {
+        console.log("try syncItems connection: " + JSON.stringify(connection.info))
+        return connection.info && sync(connection)
+      } ))
     } catch (error) {
       const { message } = (error as Error) || { message: 'Unknown error' }
       console.error(`Error syncing items: ${message}`)

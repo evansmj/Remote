@@ -10,8 +10,10 @@
     syncing = true
 
     try {
+      console.log("SyncRouteData try sync()")
       await sync()
     } catch (error) {
+      console.log("Error syncing route data")
       console.error('Error syncing route data:', error)
     }
 

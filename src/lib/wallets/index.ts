@@ -21,7 +21,8 @@ import {
   updateChannels,
   updateTransactions,
   updateInvoices,
-  updateAddresses
+  updateAddresses,
+  updatePrisms,
 } from '$lib/db/helpers.js'
 
 type ConnectionCategory = 'lightning' | 'onchain' | 'exchange' | 'custodial' | 'custom'
@@ -155,6 +156,8 @@ export const fetchChannels = async (connection: Connection) =>
   connection.channels
     .get()
     .then(channels => {
+      //this is blank
+      console.log("updateChannels being called with " + JSON.stringify(channels))
       return updateChannels(channels)
     })
     .catch(error => log.error(error?.detail?.message || error))
@@ -213,6 +216,23 @@ export const fetchDeposits = async (connection: Connection) =>
     })
     .catch(error => log.error(error?.detail?.message || error))
 
+export const fetchPrisms = async (connection: Connection) => {
+  console.log("### fetchPrisms connection.prisms: " + connection.prisms)
+  //having an error here makes logs not report.  wtf.
+  if (connection.prisms) {
+  return connection.prisms
+    .get()
+    .then(prisms => {
+      console.log("updatePrisms()")
+      return updatePrisms(prisms)
+    })
+    .catch(error => {
+      console.log("error on fetchPrisms: " + error)
+      log.error(error?.detail?.message || error)
+    })
+  }
+}
+
 let lastPaidInvoiceIndexNotification: number
 
 /** lastSync unix timestamp seconds to be used in future pass to get methods to get update
@@ -257,10 +277,14 @@ export const syncConnectionData = (
   const depositsRequest = () => fetchDeposits(connection)
   requestQueue.push(depositsRequest)
 
+  const prismsRequest = () => fetchPrisms(connection)
+  requestQueue.push(prismsRequest)
+
   /** process request queue
    * then listen for invoice updates
    */
   processQueue(requestQueue, progress$).then(async () => {
+    console.log("index.ts/processQueue")
     // update all invoices with fallback and all addresses if associated tx
     await Promise.all([updateInvoices(), updateAddresses()])
 

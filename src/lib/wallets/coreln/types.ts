@@ -20,7 +20,8 @@ import type {
   UtxosInterface,
   ForwardsInterface,
   SignaturesInterface,
-  NetworkInterface
+  NetworkInterface,
+  PrismsInterface
 } from '../interfaces.js'
 import type { Wallet } from '$lib/@types/wallets.js'
 
@@ -60,6 +61,7 @@ export interface CorelnConnectionInterface extends Connection {
   blocks: BlocksInterface
   forwards: ForwardsInterface
   network: NetworkInterface
+  prisms: PrismsInterface
 }
 
 export interface GetinfoResponse {
@@ -1171,6 +1173,25 @@ export type ListNodesResponse = {
   nodes: (NodeBaseResponse | NodeFullResponse)[]
 }
 
+export type PrismListResponse = {
+  prisms: PrismResponse[]
+}
+
+export type PrismResponse = {
+  prism_id: string,
+  prism_members: PrismMemberResponse[],
+  timestamp: number
+}
+
+export type PrismMemberResponse = {
+  "member_id": string,
+  "label": string,
+  "destination": string,
+  "split": number,
+  "fees_incurred_by": string,
+  "payout_threshold": string
+}
+
 export type LNResponse =
   | InvoiceResponse
   | ListinvoicesResponse
@@ -1198,6 +1219,7 @@ export type LNResponse =
   | ListForwardsResponse
   | FundChannelResponse
   | ListNodesResponse
+  | PrismListResponse
 
 export type RpcRequest = (req: JsonRpcRequest & { rune: string }) => Promise<unknown>
 

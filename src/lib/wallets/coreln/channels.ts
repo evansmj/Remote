@@ -21,6 +21,7 @@ class Channels implements ChannelsInterface {
   }
 
   public async get(channel?: { id: string; peerId: string }): Promise<Channel[]> {
+    console.log("channels.ts get() called @@@@@@@@@@@@@@@@@@")
     try {
       const { version } = await this.connection.info
       const versionNumber = convertVersionNumber(version as string)

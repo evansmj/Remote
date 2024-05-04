@@ -16,6 +16,7 @@ export type Tile =
   // | 'accounting'
   // | 'charts'
   // | 'trades'
+  | 'prisms'
   | 'settings'
 
 export type Language =

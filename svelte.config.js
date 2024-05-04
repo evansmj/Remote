@@ -45,6 +45,7 @@ const config = {
         '/payments/pay/onchain/[address]',
         '/payments/receive',
         '/payments/[id]',
+        '/prisms',
         '/utxos',
         '/utxos/[id]',
         '/forwards',

@@ -16,6 +16,7 @@ import type { AppError } from '$lib/@types/errors.js'
 import { parseNodeAddress } from '$lib/address.js'
 import handleError from './error.js'
 import Network from './network.js'
+import Prisms from './prisms.js'
 import { createSocket } from './worker.js'
 
 import type {
@@ -37,7 +38,8 @@ import type {
   UtxosInterface,
   ForwardsInterface,
   NetworkInterface,
-  ConnectionStatus
+  ConnectionStatus,
+  PrismsInterface
 } from '../interfaces.js'
 
 class CoreLightning implements CorelnConnectionInterface {
@@ -63,6 +65,7 @@ class CoreLightning implements CorelnConnectionInterface {
   blocks: BlocksInterface
   forwards: ForwardsInterface
   network: NetworkInterface
+  prisms: PrismsInterface
 
   constructor(
     walletId: string,
@@ -154,6 +157,7 @@ class CoreLightning implements CorelnConnectionInterface {
     this.blocks = new Blocks(this)
     this.forwards = new Forwards(this)
     this.network = new Network(this)
+    this.prisms = new Prisms(this)
   }
 
   updateToken(token: string): void {
@@ -202,7 +206,8 @@ export const methods = [
   'bkpr-listaccountevents',
   'newaddr',
   'withdraw',
-  'listclosedchannels'
+  'listclosedchannels',
+  'prism-list' //todo do i need this?
 ]
 
 export default CoreLightning

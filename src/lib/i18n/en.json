@@ -25,6 +25,9 @@
     "/payment": {
       "title": "Payment"
     },
+    "/prisms": {
+      "title": "Prisms"
+    },
     "/utxos": {
       "title": "UTXOs"
     },
@@ -232,6 +235,8 @@
     "no_forwards_filtered": "No forwards match your current filters.",
     "no_wallets": "No wallets here, add a wallet to get started.",
     "no_wallets_filtered": "No wallets match your current filters.",
+    "no_prisms": "You have no prisms, try syncing your wallets or create a new prism.",
+    "no_prisms_filtered": "No prisms match your current filters.",
     "destination": "Destination",
     "unconfirmed": "Spendable (unconfirmed)",
     "confirmed": "Spendable",
@@ -501,7 +506,8 @@
     "reset_confirmation": "Are you sure you want to delete all your data and completely reset the app?",
     "start_scanner": "Start scanner",
     "import_image": "Import image",
-    "read_nfc": "Read NFC"
+    "read_nfc": "Read NFC",
+    "prism": "Prism"
   },
   "errors": {
     "connection_unknown": "Oh dear, something went wrong, please try again or contact support.",

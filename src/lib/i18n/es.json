@@ -25,6 +25,9 @@
     "/payment": {
       "title": "Pago"
     },
+    "/prisms": {
+      "title": "Prismas"
+    },
     "/utxos": {
       "title": "UTXOs"
     },
@@ -231,6 +234,7 @@
     "no_forwards_filtered": "No hay reenvios que coincidan con tus filtros actuales.",
     "no_wallets": "No hay billeteras aquí, agrega una billetera para comenzar.",
     "no_wallets_filtered": "No hay billeteras que coincidan con tus filtros actuales.",
+    "no_prisms": "No tienes prismas, intenta sincronizar tus billeteras o crea una prisma.",
     "destination": "Destino",
     "unconfirmed": "Para gastar (sin confirmar)",
     "confirmed": "Para gastar",
@@ -577,7 +581,8 @@
     "wallet_channel_open_unavailable": "No tienes ninguna billetera conectada que pueda abrir un canal.",
     "fetched_invoice_invalid": "Una factura inválida fue devuelta al intentar pagar la oferta.",
     "fetched_invoice_amount_invalid": "La factura devuelta tiene una cantidad diferente a lo requerido por la oferta.",
-    "decode_rune": "Runa inválida."
+    "decode_rune": "Runa inválida.",
+    "prism": "Prisma"
   },
   "languages": {
     "en": "Inglés",

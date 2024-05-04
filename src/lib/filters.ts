@@ -208,6 +208,14 @@ const channelTransactionFilter = (): Filter => ({
   applied: false
 })
 
+//todo wtf
+const prismFilter = (): Filter => ({
+  label: get(translate)(`app.labels.prism`),
+  key: 'data.prism',
+  type: 'exists',
+  applied: false
+})
+
 const offerInvoiceFilter = (): Filter => ({
   key: 'data.offer',
   type: 'exists',
@@ -327,6 +335,8 @@ export const routeFilters = (route: string): Filter[] => {
       return [forwardStatusFilter(), walletFilter(), feeFilter(), timestampFilter()]
     case 'wallets':
       return [walletTypeFilter()]
+    case 'prisms':
+      return [prismFilter()]
     default:
       throw new Error(`Unknown route: ${route}`)
   }
@@ -377,6 +387,14 @@ export const routeSorters = (route: string): Sorters => {
     }
     case 'wallets': {
       const timestamp = timestampSorter('createdAt', 'created_at')
+
+      return {
+        applied: { key: timestamp.key, direction: timestamp.direction },
+        options: [timestamp]
+      }
+    }
+    case 'prisms': {
+      const timestamp = timestampSorter()
 
       return {
         applied: { key: timestamp.key, direction: timestamp.direction },
